@@ -58,4 +58,3 @@ defmodule OAuth2.Strategy.AuthCode do
     |> put_headers(headers)
   end
 end
-

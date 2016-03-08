@@ -17,21 +17,22 @@ defmodule OAuth2.Mixfile do
   end
 
   def application do
-    [applications: [:httpoison, :poison, :mimetype_parser]]
+    [applications: [:httpoison, :jose, :poison, :mimetype_parser]]
   end
 
   defp deps do
-    [{:httpoison, "~> 0.7"},
-     {:poison, "~> 1.3"},
+    [{:httpoison, "~> 0.8"},
+     {:jose, "~> 1.4"},
      {:mimetype_parser, "~> 0.1"},
+     {:poison, "~> 1.5"},
 
      # Test dependencies
-     {:bypass, "~> 0.1", only: :test},
+     {:bypass, "~> 0.5", only: :test},
      {:excoveralls, "~> 0.3", only: :test},
 
      # Docs dependencies
-     {:earmark, "~> 0.1", only: :docs},
-     {:ex_doc, "~> 0.10", only: :docs}]
+     {:earmark, "~> 0.2", only: :docs},
+     {:ex_doc, "~> 0.11", only: :docs}]
   end
 
   defp description do
