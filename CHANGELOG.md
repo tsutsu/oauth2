@@ -1,6 +1,13 @@
 # Changelog
 
-## master
+## v0.8.2 (2016-11-22)
+
+### Bug Fixes
+
+* Fixed an issue in handling non-standard `expires` key in access token
+  requests.
+
+## v0.8.1 (2016-11-18)
 
 ### Improvements
 
