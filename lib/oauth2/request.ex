@@ -26,6 +26,41 @@ defmodule OAuth2.Request do
     end
   end
 
+  def request(method, %Client{version: "1.0a"} = client, url, body, headers, opts) do
+    req_creds = OAuther.credentials(
+      consumer_key: client.client_id,
+      consumer_secret: client.client_secret,
+      token: client.token.access_token,
+      token_secret: client.token.token_secret
+    )
+
+    req_url = client |> process_url(url)
+    req_params = Keyword.get(opts, :params, []) |> Enum.sort
+    req_headers = client.headers ++ headers
+
+    content_type = content_type(req_headers)
+    req_headers = process_request_headers(req_headers, content_type) |> Enum.sort
+    req_body = encode_request_body(body, content_type)
+
+    req_params = OAuther.sign(to_string(method), req_url, req_params, req_creds)
+    {oauth_header, req_params} = OAuther.header(req_params)
+    req_headers = req_headers ++ [oauth_header]
+    req_url = process_params(req_url, req_params)
+
+    opts = case method do
+      :get -> opts
+      _    -> [{:with_body, true} | opts]
+    end
+
+    case :hackney.request(method, req_url, req_headers, req_body, opts) do
+      {:ok, status, resp_headers, resp_client_ref} ->
+        {:ok, resp_body} = :hackney.body(resp_client_ref)
+        {:ok, Response.new(status, resp_headers, resp_body)}
+      {:error, reason} ->
+        {:error, %Error{reason: reason}}
+    end
+  end
+
   @doc """
   Same as `request/6` but returns `OAuth2.Response` or raises an error if an
   error occurs during the request.
