@@ -34,6 +34,7 @@ defmodule OAuth2.Client do
 
   alias OAuth2.{AccessToken, Client, Error, Request}
 
+  @type version       :: binary
   @type authorize_url :: binary
   @type body          :: any
   @type client_id     :: binary
@@ -49,6 +50,7 @@ defmodule OAuth2.Client do
   @type token_url     :: binary
 
   @type t :: %Client{
+    version:       version,
     authorize_url: authorize_url,
     client_id:     client_id,
     client_secret: client_secret,
@@ -62,7 +64,8 @@ defmodule OAuth2.Client do
     token_url:     token_url
   }
 
-  defstruct authorize_url: "/oauth/authorize",
+  defstruct version: "2.0",
+            authorize_url: "/oauth/authorize",
             client_id: "",
             client_secret: "",
             headers: [],
@@ -79,6 +82,7 @@ defmodule OAuth2.Client do
 
   ## Client struct fields
 
+  * `version` - OAuth version: "1.0a" or "2.0", defaults to "2.0"
   * `authorize_url` - absolute or relative URL path to the authorization
     endpoint. Defaults to `"/oauth/authorize"`
   * `client_id` - the client_id for the OAuth2 provider

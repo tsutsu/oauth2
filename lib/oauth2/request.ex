@@ -11,7 +11,7 @@ defmodule OAuth2.Request do
   Makes a request of given type to the given URL using the `OAuth2.AccessToken`.
   """
   @spec request(atom, Client.t, binary, body, Client.headers, Keyword.t) :: {:ok, Response.t} | {:error, Error.t}
-  def request(method, %Client{} = client, url, body, headers, opts) do
+  def request(method, %Client{version: "2.0"} = client, url, body, headers, opts) do
     url = client |> process_url(url) |> process_params(opts[:params])
     headers = req_headers(client, headers)
     content_type = content_type(headers)
