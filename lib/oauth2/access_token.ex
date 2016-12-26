@@ -12,12 +12,13 @@ defmodule OAuth2.AccessToken do
 
   alias OAuth2.AccessToken
 
-  @standard ["access_token", "refresh_token", "expires_in", "token_type"]
+  @standard ["access_token", "refresh_token", "expires_in", "token_secret", "token_type"]
 
   @type access_token  :: binary
   @type refresh_token :: binary
   @type expires_at    :: integer
   @type token_type    :: binary
+  @type token_secret  :: binary
   @type other_params  :: %{}
   @type body          :: binary | %{}
 
@@ -25,12 +26,14 @@ defmodule OAuth2.AccessToken do
               access_token:  access_token,
               refresh_token: refresh_token,
               expires_at:    expires_at,
+              token_secret:  token_secret,
               token_type:    token_type,
               other_params:  other_params}
 
   defstruct access_token: "",
             refresh_token: nil,
             expires_at: nil,
+            token_secret: nil,
             token_type: "Bearer",
             other_params: %{}
 
@@ -49,7 +52,12 @@ defmodule OAuth2.AccessToken do
       iex> OAuth2.AccessToken.new(%{"access_token" => "abc123"})
       %OAuth2.AccessToken{access_token: "abc123", expires_at: nil, other_params: %{}, refresh_token: nil, token_type: "Bearer"}
   """
-  @spec new(binary) :: t
+  @spec new(binary, binary) :: t
+  def new(token, token_secret) when is_binary(token) and is_binary(token_secret) do
+    new(%{"access_token" => token, "token_secret" => token_secret})
+  end
+
+  @spec new(binary | map) :: t
   def new(token) when is_binary(token) do
     new(%{"access_token" => token})
   end
@@ -61,6 +69,7 @@ defmodule OAuth2.AccessToken do
       access_token:  std["access_token"],
       refresh_token: std["refresh_token"],
       expires_at:    (std["expires_in"] || other["expires"]) |> expires_at,
+      token_secret:  std["token_secret"],
       token_type:    std["token_type"] |> normalize_token_type(),
       other_params:  other
     ])
